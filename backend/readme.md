@@ -1,18 +1,18 @@
-current folder structure:
+# Project Structure
 
 api/
 ├── __init__.py
 ├── admin.py
 ├── apps.py
-├── models.py            # ALL models (as you already designed)
+├── models.py            # All models (users, tracks, albums, playlists, etc.)
 │
-├── auth/                # authentication + authorization
+├── auth/                # Authentication & authorization
 │   ├── __init__.py
-│   ├── views.py         # login, signup, logout
-│   ├── permissions.py   # role & ownership checks
-│   └── tokens.py        # JWT / session helpers
+│   ├── views.py         # login, signup, logout endpoints
+│   ├── permissions.py   # role-based & ownership checks
+│   └── tokens.py        # JWT/session helpers
 │
-├── views/               # API endpoints (grouped by domain)
+├── views/               # API endpoints grouped by domain
 │   ├── __init__.py
 │   ├── users.py
 │   ├── artists.py
@@ -24,19 +24,19 @@ api/
 │   ├── analytics.py
 │   └── notifications.py
 │
-├── services/            # business logic (NO HTTP, NO SQL)
+├── services/            # Business logic (no HTTP or SQL)
 │   ├── __init__.py
 │   ├── playlist_service.py
 │   ├── track_service.py
 │   ├── recommendation_service.py
 │   └── notification_service.py
 │
-├── db/                  # raw PostgreSQL access
+├── db/                  # PostgreSQL/raw SQL helpers
 │   ├── __init__.py
-│   ├── analytics.py     # trending, stats
+│   ├── analytics.py     # trending tracks, stats
 │   ├── reports.py
-│   └── queries.sql      # optional reference
+│   └── queries.sql      # optional reference queries
 │
 ├── serializers.py       # request/response shaping (DRF or manual)
 ├── urls.py              # /api/... routes
-└── utils.py
+└── utils.py             # misc helpers (formatting, validation, etc.)
