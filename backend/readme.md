@@ -1,5 +1,6 @@
 # Project Structure
 
+```text
 api/
 ├── __init__.py
 ├── admin.py
