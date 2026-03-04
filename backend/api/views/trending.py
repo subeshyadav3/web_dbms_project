@@ -1,8 +1,16 @@
-from rest_framework import viewsets, permissions
+from rest_framework.viewsets import ReadOnlyModelViewSet
 from api.models import TrendingTrack
 from api.serializers import TrendingTrackSerializer
 
-class TrendingTrackViewSet(viewsets.ModelViewSet):
-    queryset = TrendingTrack.objects.all()
+
+class TrendingTrackViewSet(ReadOnlyModelViewSet):
     serializer_class = TrendingTrackSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        period = self.request.query_params.get("period", "daily")
+        return (
+            TrendingTrack.objects
+            .select_related("track__artist")
+            .filter(period=period)
+            .order_by("-trend_score")
+        )

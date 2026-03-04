@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from .models import (
     User, Artist, Album, Track, Playlist, PlaylistTrack,
-    TrackLike, FavoriteTrack, FavoritePlaylist, FavoriteArtist,
+    TrackLike, Favorite, FavoritePlaylist, FavoriteArtist,
     PlayHistory, Genre, TrackGenre, TrackStat,
     TrendingTrack, Notification, UserFollow
 )
@@ -66,12 +66,12 @@ class TrackSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Track
-        fields = [
-            'id', 'title', 'audio_url', 'duration', 'language', 'is_original',
-            'artist', 'artist_name', 'album', 'album_title', 'uploaded_by', 'stats',
-            'created_at', 'updated_at'
-        ]
 
+        fields = [
+            'id', 'title', 'audio_url', 'duration',  
+            'artist', 'artist_name', 'album', 'album_title',  'stats',
+            'created_at'
+        ]
 # -------------------- Playlist Serializer --------------------
 
 class PlaylistSerializer(serializers.ModelSerializer):
@@ -113,9 +113,10 @@ class TrackLikeSerializer(serializers.ModelSerializer):
         model = TrackLike
         fields = ['id', 'user', 'track', 'created_at']
 
+# Updated Favorite serializer
 class FavoriteTrackSerializer(serializers.ModelSerializer):
     class Meta:
-        model = FavoriteTrack
+        model = Favorite  # <-- changed from FavoriteTrack to Favorite
         fields = ['id', 'user', 'track', 'created_at']
 
 class FavoritePlaylistSerializer(serializers.ModelSerializer):
@@ -127,7 +128,6 @@ class FavoriteArtistSerializer(serializers.ModelSerializer):
     class Meta:
         model = FavoriteArtist
         fields = ['id', 'user', 'artist', 'created_at']
-
 # -------------------- Play History --------------------
 
 class PlayHistorySerializer(serializers.ModelSerializer):
