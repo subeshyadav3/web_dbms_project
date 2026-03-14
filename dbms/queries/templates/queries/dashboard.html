@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Command Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f111a;
+            --card-bg: #1a1d29;
+            --accent-color: #64ffda; /* Cyber Mint */
+            --text-main: #e6f1ff;
+            --text-dim: #8892b0;
+            --border-color: #233554;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            line-height: 1.6;
+        }
+
+        /* Sidebar Navigation */
+        nav {
+            width: 280px;
+            background-color: #020c1b;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            padding: 30px 20px;
+            box-sizing: border-box;
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+        }
+
+        nav h1 {
+            font-size: 1rem;
+            color: var(--accent-color);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border-left: 3px solid var(--accent-color);
+            padding-left: 15px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav li a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: block;
+            padding: 12px 10px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        nav li a:hover {
+            background: rgba(100, 255, 218, 0.1);
+            color: var(--accent-color);
+            padding-left: 15px;
+        }
+
+        /* Content Area */
+        main {
+            flex-grow: 1;
+            padding: 50px;
+            max-width: calc(100vw - 320px);
+        }
+
+        .welcome-hero {
+            margin-bottom: 50px;
+        }
+
+        .welcome-hero h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .welcome-hero p {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+        }
+
+        /* Dashboard Cards */
+        .query-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7);
+            border: 1px solid var(--border-color);
+        }
+
+        .query-card h2 {
+            margin-top: 0;
+            font-size: 1.4rem;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .query-card h2::before {
+            content: '>';
+            font-family: monospace;
+            opacity: 0.5;
+        }
+
+        /* Professional Tables */
+        .table-container {
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background: transparent;
+        }
+
+        th {
+            background-color: #233554;
+            color: var(--accent-color);
+            text-align: left;
+            padding: 15px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+            font-size: 0.9rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: rgba(100, 255, 218, 0.03);
+        }
+
+        /* Badge for Results Count */
+        .badge {
+            font-size: 0.7rem;
+            background: var(--border-color);
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: var(--text-dim);
+            float: right;
+        }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            nav { width: 100%; height: auto; position: relative; }
+            main { max-width: 100%; padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <h1>SQL Terminal</h1>
+        <ul>
+            {% for title, result in queries %}
+                <li><a href="#q{{ forloop.counter }}">{{ title }}</a></li>
+            {% endfor %}
+        </ul>
+    </nav>
+
+    <main>
+        <div class="welcome-hero">
+            <h1>Database Commander</h1>
+            <p>Execution results for {{ queries|length }} optimized PostgreSQL queries.</p>
+        </div>
+
+        {% for title, result in queries %}
+        <section class="query-card" id="q{{ forloop.counter }}">
+            <h2>
+                {{ title }}
+                <span class="badge">{{ result.1|length }} rows returned</span>
+            </h2>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            {% for col in result.0 %}
+                                <th>{{ col }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in result.1 %}
+                            <tr>
+                                {% for val in row %}
+                                    <td>{{ val }}</td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        {% endfor %}
+    </main>
+
+</body>
+</html>
