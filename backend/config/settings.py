@@ -60,8 +60,15 @@ load_environment_files()
 # SECURITY
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',') if host.strip()]
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "music-nine-theta-13.vercel.app",
+]
 
+extra_hosts = os.getenv("ALLOWED_HOSTS", "")
+if extra_hosts:
+    ALLOWED_HOSTS += [host.strip() for host in extra_hosts.split(",") if host.strip()]
 # DATABASE
 database_url = os.getenv('DATABASE_URL', '').strip()
 if database_url:
