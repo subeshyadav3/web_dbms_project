@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { FaHeart, FaRegHeart } from 'react-icons/fa'
-import { CalendarDays, Clock3, Play, Star, UserRound, Music } from 'lucide-react'
+import { CalendarDays, Clock3, Play, Star, UserRound, Music, UserPlus, UserCheck } from 'lucide-react'
 import { getTrack, favoriteTrack, unfavoriteTrack } from '../api/track.api'
+import { followUser, isFollowingUser, unfollowUser } from '../api/user.api'
 import { usePlayer } from '../contexts/PlayerContext'
 import { formatDate, formatDuration } from '../utils/format'
 import { toMediaUrl } from '../utils/media'
@@ -19,6 +20,7 @@ function TrackDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [optimisticFavorite, setOptimisticFavorite] = useState(null)
+  const [isFollowing, setIsFollowing] = useState(false)
 
   const isFavorite = useMemo(() => {
     if (optimisticFavorite != null) return optimisticFavorite
@@ -31,7 +33,12 @@ function TrackDetailPage() {
       setLoading(true); setError('')
       try {
         const data = await getTrack(trackId)
-        if (mounted) setTrack(data)
+        if (!mounted) return
+        setTrack(data)
+        if (data.artist_user_id) {
+          const following = await isFollowingUser(data.artist_user_id)
+          if (mounted) setIsFollowing(following)
+        }
       } catch {
         if (mounted) setError('Could not load track.')
       } finally {
@@ -57,6 +64,14 @@ function TrackDetailPage() {
     } catch {
       setOptimisticFavorite(null)
     }
+  }
+
+  const handleFollowToggle = async () => {
+    if (!track?.artist_user_id) return
+    try {
+      if (isFollowing) { await unfollowUser(track.artist_user_id); setIsFollowing(false) }
+      else { await followUser(track.artist_user_id); setIsFollowing(true) }
+    } catch {}
   }
 
   if (loading) {
@@ -91,7 +106,6 @@ function TrackDetailPage() {
     <section className="tdetail-page">
       <div className="tdetail-hero">
 
-        {/* Artwork */}
         <div className="tdetail-art">
           {heroImage
             ? <img src={heroImage} alt={track.title} className="tdetail-art__img" />
@@ -99,7 +113,6 @@ function TrackDetailPage() {
           }
         </div>
 
-        {/* Info */}
         <div className="tdetail-info">
           <span className="tdetail-eyebrow">Track</span>
           <h2 className="tdetail-title">{track.title}</h2>
@@ -122,7 +135,6 @@ function TrackDetailPage() {
             )}
           </div>
 
-          {/* Stats row */}
           <div className="tdetail-stats">
             <div className="tdetail-stat">
               <Clock3 size={12} />
@@ -146,11 +158,9 @@ function TrackDetailPage() {
             </div>
           </div>
 
-          {/* Actions */}
           <div className="tdetail-actions">
             <button type="button" className="tdetail-play-btn" onClick={handlePlay}>
-              <Play size={15} />
-              Play
+              <Play size={15} /> Play
             </button>
             <button
               type="button"
@@ -159,6 +169,14 @@ function TrackDetailPage() {
             >
               {isFavorite ? <FaHeart size={14} /> : <FaRegHeart size={14} />}
               {isFavorite ? 'Unfavorite' : 'Favorite'}
+            </button>
+            <button
+              type="button"
+              className={`tdetail-follow-btn ${isFollowing ? 'tdetail-follow-btn--active' : ''}`}
+              onClick={handleFollowToggle}
+            >
+              {isFollowing ? <UserCheck size={14} /> : <UserPlus size={14} />}
+              {isFollowing ? 'Following' : 'Follow'}
             </button>
           </div>
         </div>

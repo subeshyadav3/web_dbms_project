@@ -1,6 +1,7 @@
-import { BellRing } from 'lucide-react'
+import { BellRing, TrendingUp, Disc3 } from 'lucide-react'
 import { useMemo } from 'react'
 import { useHomeData } from '../state/useHomeData'
+import '../App.css'
 
 function NotificationsPage() {
   const { trendingTracks, albums } = useHomeData()
@@ -8,37 +9,59 @@ function NotificationsPage() {
   const notifications = useMemo(() => {
     const trendItems = trendingTracks.slice(0, 3).map((track) => ({
       id: `trend-${track.id}`,
-      text: `${track.title} by ${track.artist_name || 'Unknown Artist'} is trending this week.`,
+      type: 'trend',
+      title: track.title,
+      sub: track.artist_name || 'Unknown Artist',
+      text: 'is trending this week',
     }))
 
     const albumItems = albums.slice(0, 3).map((album) => ({
       id: `album-${album.id}`,
-      text: `Album update: ${album.title} by ${album.artist_name || 'Unknown Artist'}`,
+      type: 'album',
+      title: album.title,
+      sub: album.artist_name || 'Unknown Artist',
+      text: 'album update',
     }))
 
     return [...trendItems, ...albumItems]
   }, [albums, trendingTracks])
 
+  const iconMap = {
+    trend: <TrendingUp size={14} />,
+    album: <Disc3 size={14} />,
+  }
+
   return (
-    <section className="page-section">
-      <header className="page-header">
-        <div>
+    <section className="notif-page">
+      <header className="notif-header">
+        <div className="notif-header__left">
           <h2>Notifications</h2>
-          <p>Latest updates from your music platform.</p>
+          {notifications.length > 0 && (
+            <span className="notif-badge">{notifications.length}</span>
+          )}
         </div>
-        <span className="header-count">{notifications.length} updates</span>
       </header>
 
-      <div className="notification-list">
+      <div className="notif-list">
         {notifications.length ? (
           notifications.map((item) => (
-            <article className="notification-card" key={item.id}>
-              <BellRing size={16} />
-              <p>{item.text}</p>
+            <article className="notif-card" key={item.id}>
+              <div className={`notif-card__icon notif-card__icon--${item.type}`}>
+                {iconMap[item.type]}
+              </div>
+              <div className="notif-card__body">
+                <p className="notif-card__text">
+                  <span className="notif-card__title">{item.title}</span>
+                  {' '}<span className="notif-card__verb">{item.text}</span>
+                </p>
+                <span className="notif-card__sub">{item.sub}</span>
+              </div>
+              <div className="notif-card__dot" />
             </article>
           ))
         ) : (
-          <div className="empty-card">
+          <div className="fav-empty">
+            <div className="fav-empty__icon"><BellRing size={22} /></div>
             <p>No notifications yet.</p>
           </div>
         )}

@@ -85,13 +85,14 @@ class TrackSerializer(serializers.ModelSerializer):
     artist_name = serializers.CharField(source='artist.stage_name', read_only=True)
     album_title = serializers.CharField(source='album.title', read_only=True)
     stats = TrackStatSerializer(source='trackstat', read_only=True)
+    artist_user_id = serializers.IntegerField(source='artist.user.id', read_only=True)
 
     class Meta:
         model = Track
 
         fields = [
             'id', 'title', 'audio_url', 'cover_image', 'duration', 'play_count',
-            'artist', 'artist_name', 'album', 'album_title',  'stats',
+            'artist', 'artist_name', 'artist_user_id', 'album', 'album_title', 'stats',
             'created_at'
         ]
 # -------------------- Playlist Serializer --------------------
