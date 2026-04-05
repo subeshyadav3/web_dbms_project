@@ -1,16 +1,16 @@
-Django==6.0.1
-asgiref==3.8.1
-sqlparse==0.5.3
-tzdata==2025.1
+Django>=4.2,<5.0
+asgiref>=3.7
+sqlparse
+tzdata
 
-djangorestframework==3.16.0
-djangorestframework-simplejwt==5.5.0
-django-cors-headers==4.7.0
-django-ratelimit==4.1.0
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+django-ratelimit
 
-python-dotenv==1.0.1
-psycopg2-binary==2.9.10
-Pillow==11.1.0
+python-dotenv
+psycopg2-binary
+Pillow
 
-django-redis==5.4.0
-redis==5.2.1
+django-redis
+redis
