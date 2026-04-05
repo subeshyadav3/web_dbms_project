@@ -58,8 +58,8 @@ function Layout() {
         </nav>
 
         <div className="sidebar-user">
-          <p>{user?.username}</p>
-          <small>{user?.email}</small>
+          <p className="sidebar-user-name">{user?.username || 'Guest User'}</p>
+          <small className="sidebar-user-email">{user?.email || 'No email'}</small>
           <button type="button" onClick={logout} className="ghost-btn logout-btn">
             <LogOut size={16} />
             Logout
