@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { BookMarked } from 'lucide-react'
 import { apiClient, normalizeListResponse } from '../api/client'
 import { useAuth } from '../contexts/AuthContext'
+import PlaylistCard from '../components/PlaylistCard'
 
 function LibraryPage() {
   const { user } = useAuth()
@@ -51,6 +52,7 @@ function LibraryPage() {
           <h2>Your Library</h2>
           <p>Playlists created in your account.</p>
         </div>
+        <span className="header-count">{myPlaylists.length} playlists</span>
       </header>
 
       {loading ? <p>Loading playlists...</p> : null}
@@ -64,13 +66,7 @@ function LibraryPage() {
               <p>You do not have playlists yet.</p>
             </div>
           ) : (
-            myPlaylists.map((playlist) => (
-              <article key={playlist.id} className="playlist-card">
-                <h4>{playlist.name}</h4>
-                <p>{playlist.description || 'No description provided.'}</p>
-                <small>{playlist.is_public ? 'Public' : 'Private'}</small>
-              </article>
-            ))
+            myPlaylists.map((playlist) => <PlaylistCard key={playlist.id} playlist={playlist} />)
           )}
         </div>
       ) : null}

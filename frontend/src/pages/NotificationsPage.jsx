@@ -8,12 +8,12 @@ function NotificationsPage() {
   const notifications = useMemo(() => {
     const trendItems = trendingTracks.slice(0, 3).map((track) => ({
       id: `trend-${track.id}`,
-      text: `${track.title} is trending this week.`,
+      text: `${track.title} by ${track.artist_name || 'Unknown Artist'} is trending this week.`,
     }))
 
     const albumItems = albums.slice(0, 3).map((album) => ({
       id: `album-${album.id}`,
-      text: `New album available: ${album.title}`,
+      text: `Album update: ${album.title} by ${album.artist_name || 'Unknown Artist'}`,
     }))
 
     return [...trendItems, ...albumItems]
@@ -26,6 +26,7 @@ function NotificationsPage() {
           <h2>Notifications</h2>
           <p>Latest updates from your music platform.</p>
         </div>
+        <span className="header-count">{notifications.length} updates</span>
       </header>
 
       <div className="notification-list">

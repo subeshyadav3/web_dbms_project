@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { CalendarDays, Disc3, Music2 } from 'lucide-react'
+import { CalendarDays, Disc3, Eye, Music2 } from 'lucide-react'
 import { getAlbum } from '../api/album.api'
 import { useHomeData } from '../state/useHomeData'
+import { formatDate } from '../utils/format'
+import { toMediaUrl } from '../utils/media'
 
 function AlbumDetailPage() {
   const { id } = useParams()
@@ -61,20 +63,32 @@ function AlbumDetailPage() {
 
   return (
     <section className="page-section">
-      <header className="page-header">
+      <header className="detail-header-card">
+        <img src={toMediaUrl(album.cover_image)} alt={album.title} className="detail-cover" />
         <div>
           <h2>{album.title}</h2>
-          <p>
+          <p className="detail-subtitle">
             <Disc3 size={14} />
             <Link to={`/artists/${album.artist}`}>{album.artist_name}</Link>
           </p>
-        </div>
-        {album.release_date ? (
-          <div>
-            <CalendarDays size={14} />
-            <span>{album.release_date}</span>
+
+          <div className="meta-chips">
+            <span className="meta-chip">
+              <Music2 size={13} />
+              {albumTracks.length} tracks
+            </span>
+            <span className="meta-chip">
+              <Eye size={13} />
+              {album.visibility}
+            </span>
+            {album.release_date ? (
+              <span className="meta-chip">
+                <CalendarDays size={13} />
+                {formatDate(album.release_date)}
+              </span>
+            ) : null}
           </div>
-        ) : null}
+        </div>
       </header>
 
       <div className="section-title">
@@ -83,11 +97,15 @@ function AlbumDetailPage() {
       </div>
 
       <ul className="simple-list">
-        {albumTracks.map((track) => (
-          <li key={track.id}>
-            <Link to={`/tracks/${track.id}`}>{track.title}</Link>
-          </li>
-        ))}
+        {albumTracks.length ? (
+          albumTracks.map((track) => (
+            <li key={track.id}>
+              <Link to={`/tracks/${track.id}`}>{track.title}</Link>
+            </li>
+          ))
+        ) : (
+          <li>No tracks linked to this album yet.</li>
+        )}
       </ul>
     </section>
   )

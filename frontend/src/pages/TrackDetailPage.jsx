@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { FaHeart, FaRegHeart } from 'react-icons/fa'
-import { Clock3, Play, Star, UserRound } from 'lucide-react'
+import { CalendarDays, Clock3, Play, Star, UserRound } from 'lucide-react'
 import { getTrack, favoriteTrack, unfavoriteTrack } from '../api/track.api'
 import { usePlayer } from '../contexts/PlayerContext'
-import { formatDuration } from '../utils/format'
+import { formatDate, formatDuration } from '../utils/format'
 import { toMediaUrl } from '../utils/media'
 import { useHomeData } from '../state/useHomeData'
 
@@ -111,8 +111,20 @@ function TrackDetailPage() {
             </span>
             <span>
               <Star size={14} />
-              {track.stats?.total_plays ?? 0} plays
+              {track.stats?.total_plays ?? track.play_count ?? 0} plays
             </span>
+            <span>
+              Weekly {track.stats?.weekly_plays ?? 0}
+            </span>
+            <span>
+              Monthly {track.stats?.monthly_plays ?? 0}
+            </span>
+            {track.created_at ? (
+              <span>
+                <CalendarDays size={14} />
+                Added {formatDate(track.created_at)}
+              </span>
+            ) : null}
           </div>
 
           <div className="track-hero-actions">

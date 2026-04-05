@@ -30,15 +30,22 @@ function AlbumsPage() {
       <header className="page-header">
         <div>
           <h2>Albums</h2>
-          <p>Browse released albums in your platform.</p>
+          <p>Browse releases with visibility, track counts, and release dates.</p>
         </div>
+        <span className="header-count">{albums.length} albums</span>
       </header>
 
       {loading ? <p>Loading albums...</p> : null}
       <div className="card-grid">
-        {albums.map((album) => (
-          <AlbumCard key={album.id} album={album} />
-        ))}
+        {albums.length ? (
+          albums.map((album) => <AlbumCard key={album.id} album={album} />)
+        ) : (
+          !loading && (
+            <div className="empty-card">
+              <p>No albums found.</p>
+            </div>
+          )
+        )}
       </div>
     </section>
   )

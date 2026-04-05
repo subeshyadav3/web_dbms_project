@@ -30,15 +30,22 @@ function ArtistsPage() {
       <header className="page-header">
         <div>
           <h2>Artists</h2>
-          <p>Discover artists and their profiles.</p>
+          <p>Discover artist profiles, verification status, and catalog size.</p>
         </div>
+        <span className="header-count">{artists.length} artists</span>
       </header>
 
       {loading ? <p>Loading artists...</p> : null}
       <div className="card-grid">
-        {artists.map((artist) => (
-          <ArtistCard key={artist.id} artist={artist} />
-        ))}
+        {artists.length ? (
+          artists.map((artist) => <ArtistCard key={artist.id} artist={artist} />)
+        ) : (
+          !loading && (
+            <div className="empty-card">
+              <p>No artists found.</p>
+            </div>
+          )
+        )}
       </div>
     </section>
   )

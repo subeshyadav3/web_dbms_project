@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { favoriteTrack, unfavoriteTrack } from '../api/track.api'
 import { useHomeData } from '../state/useHomeData'
 import { formatDuration, formatDate } from '../utils/format'
-
+import { Music } from 'lucide-react'
 function TrackCard({ track, tracks = [], index = 0 }) {
   const { setQueueAndPlay } = usePlayer()
   const navigate = useNavigate()
@@ -35,7 +35,18 @@ function TrackCard({ track, tracks = [], index = 0 }) {
   return (
     <article className="track-card" onClick={() => navigate(`/tracks/${track.id}`)}>
       <div className="track-image">
-        <img src={track.cover_image} alt={track.title} />
+        {/* {track.cover_image ? (
+    <img
+      src={track.cover_image}
+      alt={track.title}
+      className="cover-img"
+    />
+  ) : (
+    <div className="cover-placeholder">
+      <Music size={32} />
+    </div>
+  )} */}
+        <Music size={32} />
       </div>
 
       <div className="track-head">

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getPlaylists } from '../api/playlist.api'
+import PlaylistCard from '../components/PlaylistCard'
 
 function PlaylistsPage() {
   const [playlists, setPlaylists] = useState([])
@@ -29,20 +30,23 @@ function PlaylistsPage() {
       <header className="page-header">
         <div>
           <h2>Playlists</h2>
-          <p>Explore public and personal playlists.</p>
+          <p>Explore personal and public playlists from your platform users.</p>
         </div>
+        <span className="header-count">{playlists.length} playlists</span>
       </header>
 
       {loading ? <p>Loading playlists...</p> : null}
 
       <div className="playlist-list">
-        {playlists.map((playlist) => (
-          <article key={playlist.id} className="playlist-card">
-            <h4>{playlist.name}</h4>
-            <p>{playlist.description || 'No description provided.'}</p>
-            <small>{playlist.is_public ? 'Public' : 'Private'}</small>
-          </article>
-        ))}
+        {playlists.length ? (
+          playlists.map((playlist) => <PlaylistCard key={playlist.id} playlist={playlist} />)
+        ) : (
+          !loading && (
+            <div className="empty-card">
+              <p>No playlists found.</p>
+            </div>
+          )
+        )}
       </div>
     </section>
   )

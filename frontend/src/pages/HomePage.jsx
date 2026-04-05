@@ -23,12 +23,27 @@ function HomePage() {
     })
   }, [tracks, search])
 
+  const totals = useMemo(() => {
+    const totalPlays = tracks.reduce(
+      (sum, track) => sum + (track.stats?.total_plays ?? track.play_count ?? 0),
+      0,
+    )
+
+    return {
+      tracks: tracks.length,
+      trending: trendingTracks.length,
+      albums: albums.length,
+      artists: artists.length,
+      plays: totalPlays,
+    }
+  }, [albums.length, artists.length, tracks, trendingTracks.length])
+
   return (
     <section className="page-section">
       <header className="page-header">
         <div>
           <h2>Discover</h2>
-          <p>Find trending tracks and continue listening.</p>
+          <p>Find trending tracks, artists, and albums from your catalog.</p>
         </div>
         <label className="search-box">
           <Search size={16} />
@@ -41,6 +56,29 @@ function HomePage() {
         </label>
       </header>
 
+      <div className="summary-grid">
+        <article className="summary-card">
+          <strong>{totals.tracks}</strong>
+          <span>Total tracks</span>
+        </article>
+        <article className="summary-card">
+          <strong>{totals.trending}</strong>
+          <span>Trending now</span>
+        </article>
+        <article className="summary-card">
+          <strong>{totals.albums}</strong>
+          <span>Albums</span>
+        </article>
+        <article className="summary-card">
+          <strong>{totals.artists}</strong>
+          <span>Artists</span>
+        </article>
+        <article className="summary-card">
+          <strong>{totals.plays}</strong>
+          <span>Total plays</span>
+        </article>
+      </div>
+
       {loading ? <p>Loading tracks...</p> : null}
 
       {!loading ? (
@@ -50,14 +88,20 @@ function HomePage() {
             <h3>Trending this week</h3>
           </div>
           <div className="track-grid">
-            {trendingTracks.map((track, index) => (
-              <TrackCard
-                key={`trending-${track.id}`}
-                track={track}
-                tracks={trendingTracks}
-                index={index}
-              />
-            ))}
+            {trendingTracks.length ? (
+              trendingTracks.map((track, index) => (
+                <TrackCard
+                  key={`trending-${track.id}`}
+                  track={track}
+                  tracks={trendingTracks}
+                  index={index}
+                />
+              ))
+            ) : (
+              <div className="empty-card">
+                <p>No trending tracks available yet.</p>
+              </div>
+            )}
           </div>
 
           <div className="section-title">
@@ -86,14 +130,20 @@ function HomePage() {
           </div>
 
           <div className="track-grid">
-            {filteredTracks.map((track, index) => (
-              <TrackCard
-                key={track.id}
-                track={track}
-                tracks={filteredTracks}
-                index={index}
-              />
-            ))}
+            {filteredTracks.length ? (
+              filteredTracks.map((track, index) => (
+                <TrackCard
+                  key={track.id}
+                  track={track}
+                  tracks={filteredTracks}
+                  index={index}
+                />
+              ))
+            ) : (
+              <div className="empty-card">
+                <p>No tracks matched your search.</p>
+              </div>
+            )}
           </div>
         </>
       ) : null}

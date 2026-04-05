@@ -49,19 +49,28 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ArtistSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    albums_count = serializers.IntegerField(source='albums.count', read_only=True)
+    tracks_count = serializers.IntegerField(source='tracks.count', read_only=True)
 
     class Meta:
         model = Artist
-        fields = ['id', 'user', 'stage_name', 'verified', 'country', 'description', 'created_at']
+        fields = [
+            'id', 'user', 'stage_name', 'verified', 'country', 'description',
+            'albums_count', 'tracks_count', 'created_at'
+        ]
 
 # -------------------- Album Serializer --------------------
 
 class AlbumSerializer(serializers.ModelSerializer):
     artist_name = serializers.CharField(source='artist.stage_name', read_only=True)
+    tracks_count = serializers.IntegerField(source='tracks.count', read_only=True)
 
     class Meta:
         model = Album
-        fields = ['id', 'artist', 'artist_name', 'title', 'cover_image', 'release_date', 'visibility', 'created_at']
+        fields = [
+            'id', 'artist', 'artist_name', 'title', 'cover_image', 'release_date',
+            'visibility', 'tracks_count', 'created_at'
+        ]
 
 # -------------------- Track Stat Serializer --------------------
 
@@ -81,7 +90,7 @@ class TrackSerializer(serializers.ModelSerializer):
         model = Track
 
         fields = [
-            'id', 'title', 'audio_url', 'duration',  
+            'id', 'title', 'audio_url', 'cover_image', 'duration', 'play_count',
             'artist', 'artist_name', 'album', 'album_title',  'stats',
             'created_at'
         ]

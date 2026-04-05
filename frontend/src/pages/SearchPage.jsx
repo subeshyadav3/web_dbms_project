@@ -28,6 +28,7 @@ function SearchPage() {
           <h2>Search</h2>
           <p>Results for "{query || '...'}"</p>
         </div>
+        {query ? <span className="header-count">{filteredTracks.length} matches</span> : null}
       </header>
 
       <div className="track-grid">
@@ -38,7 +39,13 @@ function SearchPage() {
 
       {query && filteredTracks.length === 0 ? (
         <div className="empty-card">
-          <p>No tracks matched your search.</p>
+          <p>No tracks matched your search. Try artist or album names too.</p>
+        </div>
+      ) : null}
+
+      {!query ? (
+        <div className="empty-card">
+          <p>Start typing in the top search bar to find tracks, artists, and albums.</p>
         </div>
       ) : null}
     </section>

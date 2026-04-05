@@ -42,8 +42,9 @@ function FavoritesPage() {
       <header className="page-header">
         <div>
           <h2>Favorites</h2>
-          <p>Your liked tracks.</p>
+          <p>Your liked tracks with quick playback and stats.</p>
         </div>
+        <span className="header-count">{tracks.length} tracks</span>
       </header>
 
       {loading ? <p>Loading favorites...</p> : null}
@@ -58,9 +59,9 @@ function FavoritesPage() {
 
       <div className="track-grid">
         {tracks.map((track, index) => (
-          <div key={track.id} className="track-card">
+          <div key={track.id} className="track-stack-card">
             <TrackCard track={track} tracks={tracks} index={index} />
-            <button type="button" className="ghost-btn" onClick={() => handleRemove(track.id)}>
+            <button type="button" className="ghost-btn card-action-btn" onClick={() => handleRemove(track.id)}>
               Remove favorite
             </button>
           </div>
