@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { FaHeart, FaRegHeart } from 'react-icons/fa'
-import { CalendarDays, Clock3, Play, Star, UserRound } from 'lucide-react'
+import { CalendarDays, Clock3, Play, Star, UserRound, Music } from 'lucide-react'
 import { getTrack, favoriteTrack, unfavoriteTrack } from '../api/track.api'
 import { usePlayer } from '../contexts/PlayerContext'
 import { formatDate, formatDuration } from '../utils/format'
 import { toMediaUrl } from '../utils/media'
 import { useHomeData } from '../state/useHomeData'
+import '../App.css'
 
 function TrackDetailPage() {
   const { id } = useParams()
@@ -26,45 +27,33 @@ function TrackDetailPage() {
 
   useEffect(() => {
     let mounted = true
-
     const load = async () => {
-      setLoading(true)
-      setError('')
+      setLoading(true); setError('')
       try {
         const data = await getTrack(trackId)
         if (mounted) setTrack(data)
-      } catch (err) {
+      } catch {
         if (mounted) setError('Could not load track.')
       } finally {
         if (mounted) setLoading(false)
       }
     }
-
-    if (!Number.isNaN(trackId)) {
-      load()
-    }
-
-    return () => {
-      mounted = false
-    }
+    if (!Number.isNaN(trackId)) load()
+    return () => { mounted = false }
   }, [trackId])
 
   const handlePlay = () => {
     if (!track) return
     const queueSource = tracks.length ? tracks : [track]
-    const indexInQueue = queueSource.findIndex((t) => t.id === track.id)
-    setQueueAndPlay(queueSource, indexInQueue >= 0 ? indexInQueue : 0)
+    const idx = queueSource.findIndex((t) => t.id === track.id)
+    setQueueAndPlay(queueSource, idx >= 0 ? idx : 0)
   }
 
   const handleFavoriteToggle = async () => {
     if (!track) return
     setOptimisticFavorite(!isFavorite)
     try {
-      if (isFavorite) {
-        await unfavoriteTrack(track.id)
-      } else {
-        await favoriteTrack(track.id)
-      }
+      isFavorite ? await unfavoriteTrack(track.id) : await favoriteTrack(track.id)
     } catch {
       setOptimisticFavorite(null)
     }
@@ -72,16 +61,26 @@ function TrackDetailPage() {
 
   if (loading) {
     return (
-      <section className="page-section">
-        <p>Loading track...</p>
+      <section className="tdetail-page">
+        <div className="tdetail-skeleton">
+          <div className="tdetail-skeleton__art" />
+          <div className="tdetail-skeleton__body">
+            {[80, 55, 40, 40, 60].map((w, i) => (
+              <div key={i} className="tdetail-skeleton__line" style={{ width: `${w}%` }} />
+            ))}
+          </div>
+        </div>
       </section>
     )
   }
 
   if (error || !track) {
     return (
-      <section className="page-section">
-        <p className="form-error">{error || 'Track not found.'}</p>
+      <section className="tdetail-page">
+        <div className="fav-empty">
+          <div className="fav-empty__icon"><Music size={22} /></div>
+          <p>{error || 'Track not found.'}</p>
+        </div>
       </section>
     )
   }
@@ -89,54 +88,76 @@ function TrackDetailPage() {
   const heroImage = toMediaUrl(track.cover_image)
 
   return (
-    <section className="page-section">
-      <div className="track-hero">
-        <img src={heroImage} alt={track.title} className="track-hero-image" />
-        <div className="track-hero-info">
-          <p className="eyebrow">Track</p>
-          <h2>{track.title}</h2>
-          <div className="track-hero-meta">
-            <span>
-              <UserRound size={14} />
-              <Link to={`/artists/${track.artist}`}>{track.artist_name}</Link>
+    <section className="tdetail-page">
+      <div className="tdetail-hero">
+
+        {/* Artwork */}
+        <div className="tdetail-art">
+          {heroImage
+            ? <img src={heroImage} alt={track.title} className="tdetail-art__img" />
+            : <div className="tdetail-art__fallback"><Music size={48} /></div>
+          }
+        </div>
+
+        {/* Info */}
+        <div className="tdetail-info">
+          <span className="tdetail-eyebrow">Track</span>
+          <h2 className="tdetail-title">{track.title}</h2>
+
+          <div className="tdetail-meta">
+            <span className="tdetail-meta__item">
+              <UserRound size={12} />
+              <Link className="tdetail-link" to={`/artists/${track.artist}`}>{track.artist_name}</Link>
             </span>
-            {track.album ? (
-              <span>
-                From <Link to={`/albums/${track.album}`}>{track.album_title}</Link>
+            {track.album && (
+              <span className="tdetail-meta__item">
+                From <Link className="tdetail-link" to={`/albums/${track.album}`}>{track.album_title}</Link>
               </span>
-            ) : null}
-            <span>
-              <Clock3 size={14} />
-              {formatDuration(track.duration)}
-            </span>
-            <span>
-              <Star size={14} />
-              {track.stats?.total_plays ?? track.play_count ?? 0} plays
-            </span>
-            <span>
-              Weekly {track.stats?.weekly_plays ?? 0}
-            </span>
-            <span>
-              Monthly {track.stats?.monthly_plays ?? 0}
-            </span>
-            {track.created_at ? (
-              <span>
-                <CalendarDays size={14} />
-                Added {formatDate(track.created_at)}
+            )}
+            {track.created_at && (
+              <span className="tdetail-meta__item tdetail-meta__item--muted">
+                <CalendarDays size={11} />
+                {formatDate(track.created_at)}
               </span>
-            ) : null}
+            )}
           </div>
 
-          <div className="track-hero-actions">
-            <button type="button" className="primary-btn" onClick={handlePlay}>
-              <Play size={16} /> Play
+          {/* Stats row */}
+          <div className="tdetail-stats">
+            <div className="tdetail-stat">
+              <Clock3 size={12} />
+              <span>{formatDuration(track.duration)}</span>
+            </div>
+            <div className="tdetail-stat-div" />
+            <div className="tdetail-stat">
+              <Star size={12} />
+              <span>{track.stats?.total_plays ?? track.play_count ?? 0}</span>
+              <small>plays</small>
+            </div>
+            <div className="tdetail-stat-div" />
+            <div className="tdetail-stat">
+              <span>{track.stats?.weekly_plays ?? 0}</span>
+              <small>this week</small>
+            </div>
+            <div className="tdetail-stat-div" />
+            <div className="tdetail-stat">
+              <span>{track.stats?.monthly_plays ?? 0}</span>
+              <small>this month</small>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="tdetail-actions">
+            <button type="button" className="tdetail-play-btn" onClick={handlePlay}>
+              <Play size={15} />
+              Play
             </button>
             <button
               type="button"
-              className="ghost-btn"
+              className={`tdetail-fav-btn ${isFavorite ? 'tdetail-fav-btn--active' : ''}`}
               onClick={handleFavoriteToggle}
             >
-              {isFavorite ? <FaHeart size={16} /> : <FaRegHeart size={16} />}
+              {isFavorite ? <FaHeart size={14} /> : <FaRegHeart size={14} />}
               {isFavorite ? 'Unfavorite' : 'Favorite'}
             </button>
           </div>

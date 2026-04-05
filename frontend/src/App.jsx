@@ -14,6 +14,7 @@ import SearchPage from './pages/SearchPage'
 import NotificationsPage from './pages/NotificationsPage'
 import FavoritesPage from './pages/FavoritesPage'
 import ManagePage from './pages/ManagePage'
+import TracksPage from './pages/TracksPage'
 import TrackDetailPage from './pages/TrackDetailPage'
 import ArtistDetailPage from './pages/ArtistDetailPage'
 import AlbumDetailPage from './pages/AlbumDetailPage'
@@ -50,6 +51,7 @@ function App() {
         }
       >
         <Route index element={<HomePage />} />
+        <Route path="tracks" element={<TracksPage />} />
         <Route path="artists" element={<ArtistsPage />} />
         <Route path="artists/:id" element={<ArtistDetailPage />} />
         <Route path="albums" element={<AlbumsPage />} />

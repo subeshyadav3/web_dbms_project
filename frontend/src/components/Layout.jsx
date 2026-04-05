@@ -1,6 +1,7 @@
 import {
   Disc3,
   Home,
+  ListMusic,
   Library,
   LogOut,
   Mic2,
@@ -17,6 +18,7 @@ import Topbar from './Topbar'
 
 const navItems = [
   { to: '/', icon: Home, label: 'Discover' },
+  { to: '/tracks', icon: ListMusic, label: 'Tracks' },
   { to: '/artists', icon: Mic2, label: 'Artists' },
   { to: '/albums', icon: Disc3, label: 'Albums' },
   { to: '/playlists', icon: SquareLibrary, label: 'Playlists' },

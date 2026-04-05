@@ -7,6 +7,8 @@ import { favoriteTrack, unfavoriteTrack } from '../api/track.api'
 import { useHomeData } from '../state/useHomeData'
 import { formatDuration, formatDate } from '../utils/format'
 import { Music } from 'lucide-react'
+import '../App.css'
+
 function TrackCard({ track, tracks = [], index = 0 }) {
   const { setQueueAndPlay } = usePlayer()
   const navigate = useNavigate()
@@ -33,93 +35,88 @@ function TrackCard({ track, tracks = [], index = 0 }) {
   }
 
   return (
-    <article className="track-card" onClick={() => navigate(`/tracks/${track.id}`)}>
-      <div className="track-image">
-        {/* {track.cover_image ? (
-    <img
-      src={track.cover_image}
-      alt={track.title}
-      className="cover-img"
-    />
-  ) : (
-    <div className="cover-placeholder">
-      <Music size={32} />
-    </div>
-  )} */}
-        <Music size={32} />
-      </div>
+    <>
+     
 
-      <div className="track-head">
-        <h4>{track.title}</h4>
-        <button
-          type="button"
-          className="icon-btn"
-          onClick={(event) => {
-            event.stopPropagation()
-            setQueueAndPlay(tracks, index)
-          }}
-        >
-          <Play size={16} />
-        </button>
-      </div>
+      <article
+        className="track-card"
+        onClick={() => navigate(`/tracks/${track.id}`)}
+      >
+        {/* Artwork */}
+        <div className="tc-artwork-wrap">
+          <div className="track-artwork">
+            <Music />
+          </div>
 
-      <div className="track-meta">
-        <span>
-          <UserRound size={14} />
-          {track.artist_name || 'Unknown Artist'}
-        </span>
+          {/* Play overlay */}
+          <div className="play-overlay">
+            <button
+              type="button"
+              className="play-btn-large"
+              onClick={(e) => {
+                e.stopPropagation()
+                setQueueAndPlay(tracks, index)
+              }}
+            >
+              <Play size={18} />
+            </button>
+          </div>
 
-        {track.album_title && (
-          <span>
-            Album: {track.album_title}
-          </span>
-        )}
+          {/* Favorite */}
+          <button
+            type="button"
+            className="fav-btn"
+            aria-label={isFavorite ? 'Remove favorite' : 'Add favorite'}
+            onClick={handleFavoriteToggle}
+          >
+            {isFavorite
+              ? <FaHeart size={13} color="#ff4466" />
+              : <FaRegHeart size={13} color="#6e6e88" />}
+          </button>
+        </div>
 
-        {track.genre && (
-          <span>
-            Genre: {track.genre}
-          </span>
-        )}
+        {/* Body */}
+        <div className="tc-body">
+          <h4 className="tc-title">{track.title}</h4>
+          <p className="tc-artist">
+            <UserRound size={11} />
+            {track.artist_name || 'Unknown Artist'}
+          </p>
 
-        {track.release_date && (
-          <span>
-            <Calendar size={14} />
-            {formatDate(track.release_date)}
-          </span>
-        )}
+          {/* Tags */}
+          <div className="tc-tags">
+            {track.album_title && (
+              <span className="tc-tag">{track.album_title}</span>
+            )}
+            {track.genre && (
+              <span className="tc-tag">{track.genre}</span>
+            )}
+            {track.release_date && (
+              <span className="tc-tag">{formatDate(track.release_date)}</span>
+            )}
+          </div>
 
-        <span>
-          <Clock3 size={14} />
-          {formatDuration(track.duration)}
-        </span>
-
-        <span>
-          <Star size={14} />
-          {track.stats?.total_plays ?? 0} plays
-        </span>
-
-        {track.stats?.weekly_plays != null && (
-          <span>
-            Weekly: {track.stats.weekly_plays}
-          </span>
-        )}
-
-        {track.stats?.monthly_plays != null && (
-          <span>
-            Monthly: {track.stats.monthly_plays}
-          </span>
-        )}
-
-        <button
-          type="button"
-          className="icon-btn"
-          aria-label={isFavorite ? 'Remove favorite' : 'Add favorite'}
-          onClick={handleFavoriteToggle}
-        >
-          {isFavorite ? <FaHeart size={16} color="red" /> : <FaRegHeart size={16} />}
-        </button>
-      </div>
-    </article>
+          {/* Stats */}
+          <div className="tc-stats">
+            <span className="tc-stat">
+              <Clock3 size={10} />
+              {formatDuration(track.duration)}
+            </span>
+            <div className="tc-divider" />
+            <span className="tc-stat">
+              <Star size={10} />
+              {track.stats?.total_plays ?? 0}
+            </span>
+            {track.stats?.weekly_plays != null && (
+              <>
+                <div className="tc-divider" />
+                <span className="tc-stat">{track.stats.weekly_plays}w</span>
+              </>
+            )}
+          </div>
+        </div>
+      </article>
+    </>
   )
 }
 
